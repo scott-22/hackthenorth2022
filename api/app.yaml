@@ -1,0 +1,4 @@
+runtime: nodejs16
+
+env_variables:
+  TEST_VARIABLE: "hi"
