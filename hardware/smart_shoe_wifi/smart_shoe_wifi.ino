@@ -9,32 +9,39 @@
 
 WiFiMulti wifiMulti;
 
+#define RXp2 16
+#define TXp2 17
+
 void setup() {
     Serial.begin(115200);
+    Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);
+    
     wifiMulti.addAP(WIFI_NAME, WIFI_PASSWORD);
+    delay(500);
     Serial.println("Wifi Connected");
 }
 
 void loop() {
     if((wifiMulti.run() == WL_CONNECTED)) {
+      String data = Serial2.readString();
+      if (data.length() > 0) {        
         HTTPClient http;
-        http.begin("https://httpbin.org/post");
+        http.begin("http://ptsv2.com/t/w4ec4-1663410937/post");
 
-        int httpCode = http.POST("Hello world");
+        int httpCode = http.POST("{data: " + data + "}");
 
         if(httpCode > 0) {
             Serial.printf("HTTP POST\nCode: %d\n", httpCode);
 
             if(httpCode == HTTP_CODE_OK) {
-                String payload = http.getString();
-                Serial.println(payload);
+                Serial.println("Ok");
             }
         } else {
             Serial.printf("Error: %s\n", http.errorToString(httpCode).c_str());
         }
 
         http.end();
-        delay(10000);
+      }
     }
     else {
       Serial.print(".");
