@@ -17,6 +17,7 @@ void setup() {
 
 void loop() {
     if((wifiMulti.run() == WL_CONNECTED)) {
+        HTTPClient http;
         http.begin("https://httpbin.org/post");
 
         int httpCode = http.POST("Hello world");
@@ -34,5 +35,8 @@ void loop() {
 
         http.end();
         delay(10000);
+    }
+    else {
+      Serial.print(".");
     }
 }
