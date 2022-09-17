@@ -22,4 +22,8 @@ You must build the frontend into vanilla HTML, CSS, and JS to serve it.
 1. `cd` to the `client` directory
 2. Run `npm run build`. The built files will be created under `client/build/`
 3. Move `client/build/` to `api/public/`. The Node app will statically serve whatever is in the `api/public/` directory
+  - The file structure should now look like this:
+  
+  ![image](https://user-images.githubusercontent.com/47123100/190854671-a1f59522-57d4-459c-8c8b-8ee4ffdba4ee.png)
+
 4. Now you can move on and deploy to Google Cloud! ✨
