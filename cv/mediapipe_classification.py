@@ -1,9 +1,21 @@
 import cv2
 import mediapipe as mp
+import requests
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
+def classify(results):
+  if (
+    results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].visibility < 0.6 or
+    results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].visibility < 0.6
+    ):
+    return None
+  if (abs(results.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ANKLE].z-
+    results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_ANKLE].z)) <= 0.1:
+    return "dribbling"
+  else:
+    return "kicking"
 
 # For webcam input:
 cap = cv2.VideoCapture(0)
@@ -31,6 +43,12 @@ with mp_pose.Pose(
         results.pose_landmarks,
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+    
+    if (results.pose_landmarks is not None):
+      res = classify(results)
+      if res:
+        print(res)
+
     cv2.imshow('MediaPipe Pose', cv2.flip(image, 2))
     if cv2.waitKey(5) & 0xFF == 27:
       break
