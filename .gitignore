@@ -33,5 +33,5 @@ api/public/*
 
 # Python
 venv
-.pyc
+*.pyc
 htn_images_in
