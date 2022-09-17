@@ -31,7 +31,7 @@ function App() {
     labels: [0, 1, 2],
     datasets: [
       {
-        label: "speeds",
+        label: "Speed",
         data: [0, 1, 2],
         fill: true,
         backgroundColor: "rgba(75,192,192,0.2)",
