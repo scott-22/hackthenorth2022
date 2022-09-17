@@ -27,3 +27,6 @@ dist-ssr
 
 # Hardware
 secrets.h
+
+# Api public directory (the built frontend files)
+api/public/*
