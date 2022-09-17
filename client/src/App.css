@@ -32,15 +32,13 @@
 }
 
 .dashboard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin: 0 10vw;
   margin-top: 30px;
 }
 
 .data-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .dashboard h2 {
@@ -48,7 +46,11 @@
 }
 
 .velocity-display {
-  width: 200px;
+  width: 10vw;
+  margin-bottom: 40px;
+  padding: 10px 20px;
+  border: 1px solid rgb(219, 219, 219);
+  border-radius: 5px;
 }
 
 .velocity-display h3 {
