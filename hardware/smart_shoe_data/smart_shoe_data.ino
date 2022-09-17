@@ -11,6 +11,8 @@ float velocity[3] {0, 0, 0};
 
 float orientation[3] {0, 0, 0};
 
+float max_velocity[3] {0, 0, 0};
+
 // set current frame as reference for gravity
 void calibrate() {
   sensors_event_t a, g, temp;
@@ -22,6 +24,7 @@ void calibrate() {
 
   acceleration[0] = acceleration[1] = acceleration[2] = 0;
   velocity[0] = velocity[1] = velocity[2] = 0;
+  max_velocity[0] = max_velocity[1] = max_velocity[2] = 0;
   orientation[0] = orientation[1] = orientation[2] = 0;
 
   delay(200);
@@ -103,43 +106,60 @@ void setup(void) {
 }
 
 void loop() {
-  sensors_event_t a, g, temp;
-  mpu.getEvent(&a, &g, &temp);
+  for (int i = 0; i < 27; ++i) {
+    sensors_event_t a, g, temp;
+    mpu.getEvent(&a, &g, &temp);
 
-  // update current orientation
-  orientation[0] += g.gyro.x*0.1;
-  orientation[1] += g.gyro.y*0.1;
-  orientation[2] += g.gyro.z*0.1;
+    // update current orientation
+    orientation[0] += g.gyro.x*0.1;
+    orientation[1] += g.gyro.y*0.1;
+    orientation[2] += g.gyro.z*0.1;
 
-  // rotation matrix
-  float R[3][3] =
-  {
-    { cos(orientation[2])*cos(orientation[1]), cos(orientation[2])*sin(orientation[1])*sin(orientation[0]) - sin(orientation[2])*cos(orientation[0]) , cos(orientation[2])*sin(orientation[1])*cos(orientation[0]) + sin(orientation[2])*sin(orientation[0])},
-    { sin(orientation[2])*cos(orientation[1]), sin(orientation[2])*sin(orientation[1])*sin(orientation[0]) + cos(orientation[2])*cos(orientation[0]) , sin(orientation[2])*sin(orientation[1])*cos(orientation[0]) - cos(orientation[2])*sin(orientation[0])},
-    { -1 * sin(orientation[1]), cos(orientation[1]) * sin(orientation[0]), cos(orientation[1]) * cos(orientation[0])}
-  };
+    // rotation matrix
+    float R[3][3] =
+    {
+      { cos(orientation[2])*cos(orientation[1]), cos(orientation[2])*sin(orientation[1])*sin(orientation[0]) - sin(orientation[2])*cos(orientation[0]) , cos(orientation[2])*sin(orientation[1])*cos(orientation[0]) + sin(orientation[2])*sin(orientation[0])},
+      { sin(orientation[2])*cos(orientation[1]), sin(orientation[2])*sin(orientation[1])*sin(orientation[0]) + cos(orientation[2])*cos(orientation[0]) , sin(orientation[2])*sin(orientation[1])*cos(orientation[0]) - cos(orientation[2])*sin(orientation[0])},
+      { -1 * sin(orientation[1]), cos(orientation[1]) * sin(orientation[0]), cos(orientation[1]) * cos(orientation[0])}
+    };
 
-  // correct for gravity when setting acceleration
-  acceleration[0] = a.acceleration.x*R[0][0] + a.acceleration.y*R[0][1] + a.acceleration.z*R[0][2] - gravity[0];
-  acceleration[1] = a.acceleration.x*R[1][0] + a.acceleration.y*R[1][1] + a.acceleration.z*R[1][2] - gravity[1];
-  acceleration[2] = a.acceleration.x*R[2][0] + a.acceleration.y*R[2][1] + a.acceleration.z*R[2][2] - gravity[2];
+    // correct for gravity when setting acceleration
+    acceleration[0] = a.acceleration.x*R[0][0] + a.acceleration.y*R[0][1] + a.acceleration.z*R[0][2] - gravity[0];
+    acceleration[1] = a.acceleration.x*R[1][0] + a.acceleration.y*R[1][1] + a.acceleration.z*R[1][2] - gravity[1];
+    acceleration[2] = a.acceleration.x*R[2][0] + a.acceleration.y*R[2][1] + a.acceleration.z*R[2][2] - gravity[2];
 
-  Serial.print(gravity[0]);
-  Serial.print(" ");
-  Serial.print(gravity[1]);
-  Serial.print(" ");
-  Serial.print(gravity[2]);
-  Serial.println(" ");
+    /*
+    Serial.print(gravity[0]);
+    Serial.print(" ");
+    Serial.print(gravity[1]);
+    Serial.print(" ");
+    Serial.print(gravity[2]);
+    Serial.println(" ");
 
-  /* Print out the values */
-  Serial.print("Acceleration X: ");
-  Serial.print(acceleration[0]);
-  Serial.print(", Y: ");
-  Serial.print(acceleration[1]);
-  Serial.print(", Z: ");
-  Serial.print(acceleration[2]);
-  Serial.println(" m/s^2");
+    Serial.print("Acceleration X: ");
+    Serial.print(acceleration[0]);
+    Serial.print(", Y: ");
+    Serial.print(acceleration[1]);
+    Serial.print(", Z: ");
+    Serial.print(acceleration[2]);
+    Serial.println(" m/s^2");
+    */
 
-  Serial.println("");
-  delay(100);
+    // update current velocity
+    velocity[0] += acceleration[0]*0.1;
+    velocity[1] += acceleration[1]*0.1;
+    velocity[2] += acceleration[2]*0.1;
+
+    max_velocity[0] = max(max_velocity[0], velocity[0]);
+    max_velocity[1] = max(max_velocity[1], velocity[1]);
+    max_velocity[2] = max(max_velocity[2], velocity[2]);
+
+    delay(100);
+  }
+
+  float max_velocity_magnitude = sqrt(pow(max_velocity[0], 2) + pow(max_velocity[1], 2) + pow(max_velocity[2], 2));
+  
+  Serial.println(String(max_velocity_magnitude, 2)); // indicate data being sent
+
+  calibrate();
 }
