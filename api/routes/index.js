@@ -14,19 +14,40 @@ const client = new Client(databaseUrl);
   await client.connect();
 })();
 
-/* GET home page. */
-router.get('/', async (req, res, next) => {
-  const results = await client.query("SELECT NOW()");
-  res.send({
-    message: "Hello! You did a GET request, and this is the response.",
-    resultsFromTestSqlQuery: results,
-  });
+// Velocities
+router.get('/velocities', async (req, res) => {
+  const results = await client.query("SELECT * FROM velocities ORDER BY time LIMIT 100");
+  res.send(results.rows);
 });
 
-router.post('/', (req, res) => {
-  res.send({
-    message: "Hello! You did a POST request, and this is the response.",
-  });
+router.post('/velocities', async (req, res) => {
+  // Confirm that the data matches the desired format
+  if (req.body.hasOwnProperty("data")) {
+    client.query("INSERT INTO velocities(time, value) VALUES(CURRENT_TIMESTAMP, $1);", [req.body.data]);
+    res.send(req.body);
+  } else {
+    res.status(400).send({
+      message: "Body must have a 'data' property. Instead received " + JSON.stringify(req.body)
+    });
+  }
+});
+
+// Pose types
+router.get('/pose_types', async (req, res) => {
+  const results = await client.query("SELECT * FROM pose_types ORDER BY time LIMIT 100");
+  res.send(results.rows);
+});
+
+router.post('/post_types', async (req, res) => {
+  // Confirm that the data matches the desired format
+  if (req.body.hasOwnProperty("data")) {
+    client.query("INSERT INTO pose_types(time, type) VALUES(CURRENT_TIMESTAMP, $1);", [req.body.data]);
+    res.send(req.body);
+  } else {
+    res.status(400).send({
+      message: "Body must have a 'data' property. Instead received " + JSON.stringify(req.body)
+    });
+  }
 });
 
 module.exports = router;
