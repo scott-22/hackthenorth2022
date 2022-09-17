@@ -46,15 +46,13 @@ function App() {
         .then(res => {
           setData(res);
 
-          const times = [];
-          const speeds = [];
+          const times = data.map(d => d.time);
+          const speeds = data.map(d => d.value);
           let _maxSpeed = 0;
           let _averageSpeed = 0;
           let count = 0;
 
           for (const item of data) {
-            times.push(item.time);
-            speeds.push(item.value);
             _maxSpeed = Math.max(_maxSpeed, item.value);
             _averageSpeed = (_averageSpeed * count + item.value) / (count + 1);
             count++;
@@ -66,7 +64,7 @@ function App() {
           setMaxSpeed(_maxSpeed);
 
           setGraphData({
-            labels: times,
+            labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
             datasets: [
               {
                 label: "speeds",
