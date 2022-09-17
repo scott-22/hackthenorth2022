@@ -30,3 +30,8 @@ secrets.h
 
 # Api public directory (the built frontend files)
 api/public/*
+
+# Python
+venv
+.pyc
+htn_images_in

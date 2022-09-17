@@ -26,9 +26,10 @@ void loop() {
       String data = Serial2.readString();
       if (data.length() > 0) {        
         HTTPClient http;
-        http.begin("http://ptsv2.com/t/w4ec4-1663410937/post");
-
-        int httpCode = http.POST("{data: " + data + "}");
+        http.begin("https://hackthenorth2022.uc.r.appspot.com/api/velocities");
+        http.addHeader("Content-Type", "application/json");
+        
+        int httpCode = http.POST("{\"data\": " + data + "}");
 
         if(httpCode > 0) {
             Serial.printf("HTTP POST\nCode: %d\n", httpCode);
