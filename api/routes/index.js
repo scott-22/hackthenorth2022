@@ -38,7 +38,7 @@ router.get('/pose_types', async (req, res) => {
   res.send(results.rows);
 });
 
-router.post('/post_types', async (req, res) => {
+router.post('/pose_types', async (req, res) => {
   // Confirm that the data matches the desired format
   if (req.body.hasOwnProperty("data")) {
     client.query("INSERT INTO pose_types(time, type) VALUES(CURRENT_TIMESTAMP, $1);", [req.body.data]);
