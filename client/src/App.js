@@ -60,6 +60,8 @@ function App() {
             count++;
           }
 
+          _averageSpeed = Math.round(_averageSpeed * 1000) / 1000;
+
           setAverageSpeed(_averageSpeed);
           setMaxSpeed(_maxSpeed);
 
