@@ -30,12 +30,35 @@ function roundToTenth(value) {
 }
 
 function App() {
-  const [page, setPage] = useState("dribbles");
   const [data, setData] = useState([]);
   const [types, setTypes] = useState([]);
   const [maxSpeed, setMaxSpeed] = useState(0);
   const [averageSpeed, setAverageSpeed] = useState(0);
   const [graphData, setGraphData] = useState({
+    labels: [0, 1, 2],
+    datasets: [
+      {
+        label: "Speed",
+        data: [1, 2, 3],
+        fill: true,
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)"
+      },
+    ]
+  });
+  const [graphData2, setGraphData2] = useState({
+    labels: [0, 1, 2],
+    datasets: [
+      {
+        label: "Speed",
+        data: [1, 2, 3],
+        fill: true,
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)"
+      },
+    ]
+  });
+  const [graphData3, setGraphData3] = useState({
     labels: [0, 1, 2],
     datasets: [
       {
@@ -99,35 +122,50 @@ function App() {
         const speeds = [];
         for (const item of data) {
           if (roundToTenth(item.time) in poseType) {
-            if (page === "dribbles" && poseType[item.time] === 1) {
+            if (poseType[item.time] === 1) {
               times.push(item.time);
               speeds.push(item.value);
-            } else if (page === "kicks" && poseType[item.time] === 2) {
-              times.push(item.time);
-              speeds.push(item.value);
-            } else {
-              times.push(item.time);
-              speeds.push(0);
             }
           }
         }
 
-        if (page !== "speed-vs-time") {
-          setGraphData({
-            labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
-            datasets: [
-              {
-                label: "Speed",
-                data: speeds,
-                fill: true,
-                backgroundColor: "rgba(75,192,192,0.2)",
-                borderColor: "rgba(75,192,192,1)"
-              },
-            ]
-          })
+        setGraphData2({
+          labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
+          datasets: [
+            {
+              label: "Speed",
+              data: speeds,
+              fill: true,
+              backgroundColor: "rgba(75,192,192,0.2)",
+              borderColor: "rgba(75,192,192,1)"
+            },
+          ]
+        })
+
+        times = [];
+        speeds = [];
+        for (const item of data) {
+          if (poseType[item.time] === 2) {
+            times.push(item.time);
+            speeds.push(item.value);
+          }
         }
+
+        setGraphData3({
+          labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
+          datasets: [
+            {
+              label: "Speed",
+              data: speeds,
+              fill: true,
+              backgroundColor: "rgba(75,192,192,0.2)",
+              borderColor: "rgba(75,192,192,1)"
+            },
+          ]
+        })
+
       })
-  }, [page]);
+  }, []);
 
   return (
     <div className="dashboard">
@@ -135,8 +173,8 @@ function App() {
       <div className="data-container">
         <div style={{height: "60vh", width: "50vw"}} >
           <Line data={graphData} options={{ maintainAspectRatio: false }} style={{marginBottom: "40px"}}/>
-          <Bar data={graphData} options={{ maintainAspectRatio: false }} style={{marginBottom: "40px"}}/>
-          <Bar data={graphData} options={{ maintainAspectRatio: false }} style={{paddingBottom: "100px"}}/>
+          <Bar data={graphData2} options={{ maintainAspectRatio: false }} style={{marginBottom: "40px"}}/>
+          <Bar data={graphData3} options={{ maintainAspectRatio: false }} style={{paddingBottom: "100px"}}/>
         </div>
 
         <div>
