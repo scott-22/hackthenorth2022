@@ -70,7 +70,7 @@ function App() {
     ]
   });
 
-  useEffect(() => {
+  function fetchData() {
     fetch("https://hackthenorth2022.uc.r.appspot.com/api/velocities")
       .then(res1 => res1.json())
       .then(res1 => {
@@ -157,6 +157,14 @@ function App() {
             });
           });
       });
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchData();
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
