@@ -25,12 +25,12 @@ ChartJS.register(
   Legend
 )
 
-function roundToTenth(value) {
-  return Math.round(value * 10) / 10;
+function round(value) {
+  return Math.round(value);
 }
 
 function App() {
-  const [page, setPage] = useState("dribbles");
+  const [page, setPage] = useState("speed-vs-time");
   const [maxSpeed, setMaxSpeed] = useState(0);
   const [averageSpeed, setAverageSpeed] = useState(0);
   const [graphData, setGraphData] = useState({
@@ -46,11 +46,11 @@ function App() {
     ]
   });
   const [graphData2, setGraphData2] = useState({
-    labels: [0, 1, 2],
+    labels: [],
     datasets: [
       {
         label: "Speed",
-        data: [1, 2, 3],
+        data: [],
         fill: true,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)"
@@ -58,11 +58,11 @@ function App() {
     ]
   });
   const [graphData3, setGraphData3] = useState({
-    labels: [0, 1, 2],
+    labels: [],
     datasets: [
       {
         label: "Speed",
-        data: [1, 2, 3],
+        data: [],
         fill: true,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)"
@@ -72,88 +72,92 @@ function App() {
 
   useEffect(() => {
     fetch("https://hackthenorth2022.uc.r.appspot.com/api/velocities")
-      .then(res => res.json())
-      .then(res => {
-        console.log("Received some ttuff");
+      .then(res1 => res1.json())
+      .then(res1 => {
+        fetch("https://hackthenorth2022.uc.r.appspot.com/api/pose_types")
+          .then(res2 => res2.json())
+          .then(res2 => {
+            console.log({res1, res2});
+            const times = res1.map(d => d.time);
+            const speeds = res1.map(d => d.value);
+            let _maxSpeed = 0;
+            let _averageSpeed = 0;
+            let count = 0;
 
-        const times = res.map(d => d.time);
-        const speeds = res.map(d => d.value);
-        let _maxSpeed = 0;
-        let _averageSpeed = 0;
-        let count = 0;
-
-        for (const item of res) {
-          _maxSpeed = Math.max(_maxSpeed, item.value);
-          _averageSpeed = (_averageSpeed * count + item.value) / (count + 1);
-          count++;
-        }
-        console.log("Calculated times, speeds, etc.");
-        console.log({times, speeds})
-
-        _averageSpeed = Math.round(_averageSpeed * 1000) / 1000;
-
-        setAverageSpeed(_averageSpeed);
-        setMaxSpeed(_maxSpeed);
-        console.log("Set average speed and max speed");
-
-        setGraphData2({
-          labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
-          datasets: [
-            {
-              label: "Speed",
-              data: speeds,
-              fill: true,
-              backgroundColor: "rgba(75,192,192,0.2)",
-              borderColor: "rgba(75,192,192,1)"
-            },
-          ]
-        });
-        console.log("Set graph data");
-      })
-
-    fetch("https://hackthenorth2022.uc.r.appspot.com/api/pose_types")
-      .then(res => res.json())
-      .then(res => {
-        let poseType = {};
-        for (const _type of res) {
-          poseType[roundToTenth(_type.time)] = _type.value;
-        }
-
-        const times = [];
-        const types = [];
-        for (const item of res) {
-          if (roundToTenth(item.time) in poseType) {
-            if (page === "dribbles" && poseType[item.time] === 1) {
-              times.push(item.time);
-              types.push(item.value);
-            } else if (page === "kicks" && poseType[item.time] === 2) {
-              times.push(item.time);
-              types.push(item.value);
-            } else {
-              times.push(item.time);
-              types.push(0);
+            for (const item of res1) {
+              _maxSpeed = Math.max(_maxSpeed, item.value);
+              _averageSpeed = (_averageSpeed * count + item.value) / (count + 1);
+              count++;
             }
-          }
-        }
-        console.log("Got times and types from pose_types");
-        console.log({times, types});
 
-        if (page !== "speed-vs-time") {
-          setGraphData3({
-            labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
-            datasets: [
-              {
-                label: "Speed",
-                data: types,
-                fill: true,
-                backgroundColor: "rgba(75,192,192,0.2)",
-                borderColor: "rgba(75,192,192,1)"
-              },
-            ]
-          })
-        }
-      })
-  }, [])
+            _averageSpeed = Math.round(_averageSpeed * 1000) / 1000;
+
+            setAverageSpeed(_averageSpeed);
+            setMaxSpeed(_maxSpeed);
+
+            setGraphData({
+              labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
+              datasets: [
+                {
+                  label: "Speed",
+                  data: speeds,
+                  fill: true,
+                  backgroundColor: "rgba(75,192,192,0.2)",
+                  borderColor: "rgba(75,192,192,1)"
+                },
+              ]
+            });
+
+            // ==========================
+            // Pose types
+            // ==========================
+
+            const poses = res2;
+
+            // At each index i, stores whether or not velocity[i] is a kick.
+            // 2 if it is a kick, 1 if it's a dribble
+            const _categorizations = [];
+
+            for (const time of times) {
+              const date = new Date(time);
+              for (let i = 0; i < poses.length - 1; i++) {
+                const pose = poses[i];
+                const nextPose = poses[i + 1];
+                if (new Date(pose.time).getTime() <= date.getTime() && date.getTime() < new Date(nextPose.time).getTime()) {
+                  _categorizations.push(pose.type);
+                  break;
+                }
+              }
+            }
+            console.log({_categorizations, poses});
+
+            setGraphData3({
+              labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
+              datasets: [
+                {
+                  label: "Speed",
+                  data: speeds.map((s, i) => _categorizations[i] === 2 ? s : 0),
+                  fill: true,
+                  backgroundColor: "rgba(75,192,192,0.2)",
+                  borderColor: "rgba(75,192,192,1)"
+                },
+              ]
+            });
+            setGraphData2({
+              labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
+              datasets: [
+                {
+                  label: "Speed",
+                  data: speeds.map((s, i) => _categorizations[i] === 1 ? s : 0),
+                  fill: true,
+                  backgroundColor: "rgba(75,192,192,0.2)",
+                  borderColor: "rgba(75,192,192,1)"
+                },
+              ]
+            });
+          });
+      });
+  }, []);
 
   return (
     <div className="dashboard">
