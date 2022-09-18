@@ -23,7 +23,7 @@ router.get('/velocities', async (req, res) => {
 router.post('/velocities', async (req, res) => {
   // Confirm that the data matches the desired format
   if (req.body.hasOwnProperty("data")) {
-    client.query("INSERT INTO velocities(time, value) VALUES(CURRENT_TIMESTAMP, $1);", [req.body.data]);
+    await client.query("INSERT INTO velocities(time, value) VALUES(CURRENT_TIMESTAMP, $1);", [req.body.data]);
     res.send(req.body);
   } else {
     res.status(400).send({
@@ -41,7 +41,7 @@ router.get('/pose_types', async (req, res) => {
 router.post('/pose_types', async (req, res) => {
   // Confirm that the data matches the desired format
   if (req.body.hasOwnProperty("data")) {
-    client.query("INSERT INTO pose_types(time, type) VALUES(CURRENT_TIMESTAMP, $1);", [req.body.data]);
+    await client.query(`INSERT INTO pose_types(time, type) VALUES(CURRENT_TIMESTAMP, ${req.body.data});`);
     res.send(req.body);
   } else {
     res.status(400).send({
