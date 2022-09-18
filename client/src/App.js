@@ -118,8 +118,8 @@ function App() {
           poseType[roundToTenth(_type.time)] = _type.value;
         }
 
-        const times = [];
-        const speeds = [];
+        let times = [];
+        let speeds = [];
         for (const item of data) {
           if (roundToTenth(item.time) in poseType) {
             if (poseType[item.time] === 1) {
