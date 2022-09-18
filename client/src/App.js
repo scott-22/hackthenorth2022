@@ -105,11 +105,14 @@ function App() {
             } else if (page === "kicks" && poseType[item.time] === 2) {
               times.push(item.time);
               speeds.push(item.value);
+            } else {
+              times.push(item.time);
+              speeds.push(0);
             }
           }
         }
 
-        if (page === "dribbles" || page === "kicks") {
+        if (page !== "speed-vs-time") {
           setGraphData({
             labels: times.map(time => new Date(time).getMinutes() + ":" + new Date(time).getSeconds()),
             datasets: [
