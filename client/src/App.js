@@ -26,7 +26,7 @@ ChartJS.register(
 )
 
 function roundToTenth(value) {
-  return Math.round(value * 10) / 10;
+  return Math.round(value);
 }
 
 function App() {
