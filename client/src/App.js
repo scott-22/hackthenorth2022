@@ -99,10 +99,10 @@ function App() {
         const speeds = [];
         for (const item of data) {
           if (roundToTenth(item.time) in poseType) {
-            if (page === "dribbles" && poseType[item.time] === 0) {
+            if (page === "dribbles" && poseType[item.time] === 1) {
               times.push(item.time);
               speeds.push(item.value);
-            } else if (page === "kicks" && poseType[item.time] === 1) {
+            } else if (page === "kicks" && poseType[item.time] === 2) {
               times.push(item.time);
               speeds.push(item.value);
             }
@@ -124,7 +124,7 @@ function App() {
           })
         }
       })
-  }, []);
+  }, [page]);
 
   return (
     <div className="dashboard">
