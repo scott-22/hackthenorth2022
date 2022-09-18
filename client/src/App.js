@@ -83,7 +83,7 @@ function App() {
             },
           ]
         });
-      })
+      });
     
     fetch("https://hackthenorth2022.uc.r.appspot.com/api/pose_types")
       .then(res => res.json())
@@ -124,7 +124,7 @@ function App() {
           })
         }
       })
-  })
+  }, []);
 
   return (
     <div className="dashboard">
