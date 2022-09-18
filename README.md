@@ -8,6 +8,7 @@ Prerequisites: have Google Cloud SDK installed.
 This allows you to run the `gcloud` command in the terminal.
 
 > **Note**
+>
 > After installing the Google Cloud SDK, if running `gcloud` doesn't work, try restarting your computer.
 
 1. `cd` to the `api/` directory
@@ -16,6 +17,11 @@ This allows you to run the `gcloud` command in the terminal.
 4. Yay you're done 🎉
 
 ## How to build and serve the frontend
+
+> **Note**
+>
+> I have written a powershell script (`deploy.ps1`) that does all this for you.
+> To use, run `deploy.ps1` from the `hackthenorth2022` directory.
 
 You must build the frontend into vanilla HTML, CSS, and JS to serve it.
 
