@@ -38,6 +38,21 @@
   margin-top: 60px;
 }
 
+.dashboard-links {
+  display: flex;
+}
+
+.dashboard-links > div {
+  padding: 5px 10px;
+  border: 1px solid rgb(204, 204, 204);
+  border-radius: 3px;
+  margin-right: 10px;
+}
+
+.dashboard-link-active {
+  background-color:rgb(232, 232, 232);
+}
+
 .data-container {
   display: flex;
   justify-content: space-between;
