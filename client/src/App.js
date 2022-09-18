@@ -142,7 +142,7 @@ function App() {
           ]
         })
 
-        times = [];
+        times.length = 0;
         speeds = [];
         for (const item of data) {
           if (poseType[item.time] === 2) {

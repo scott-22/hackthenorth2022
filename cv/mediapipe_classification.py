@@ -55,7 +55,7 @@ with mp_pose.Pose(
         res = classify(results)
         if res:
           print(res)
-          r = requests.post("https://hackthenorth2022.uc.r.appspot.com/api/pose_types", {"data": res})
+          r = requests.post("https://hackthenorth2022.uc.r.appspot.com/api/pose_types", json={"data": res})
           print(r)
     if cv2.waitKey(5) & 0xFF == 27:
       break
