@@ -132,22 +132,11 @@ function App() {
   return (
     <div className="dashboard">
       <h2>Dashboard</h2>
-      <div className="dashboard-links">
-        <div className={page === "speed-vs-time" ? "dashboard-link-active" : ""} onClick={() => setPage("speed-vs-time")}>Speed vs. Time</div>
-        <div className={page === "dribbles" ? "dashboard-link-active" : ""} onClick={() => setPage("dribbles")}>Dribbles</div>
-        <div className={page === "kicks" ? "dashboard-link-active" : ""} onClick={() => setPage("kicks")}>Kicks</div>
-      </div>
       <div className="data-container">
         <div style={{height: "60vh", width: "50vw"}} >
-          {page === "speed-vs-time" && 
-            <Line data={graphData} options={{ maintainAspectRatio: false }}/>
-          }
-          {page === "dribbles" && 
-            <Bar data={graphData} options={{ maintainAspectRatio: false }}/>
-          }
-          {page === "kicks" && 
-            <Bar data={graphData} options={{ maintainAspectRatio: false }}/>
-          }
+          <Line data={graphData} options={{ maintainAspectRatio: false }} style={{marginBottom: "40px"}}/>
+          <Bar data={graphData} options={{ maintainAspectRatio: false }} style={{marginBottom: "40px"}}/>
+          <Bar data={graphData} options={{ maintainAspectRatio: false }} style={{paddingBottom: "100px"}}/>
         </div>
 
         <div>
